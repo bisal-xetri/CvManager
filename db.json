@@ -1,0 +1,144 @@
+{
+  "candidates": [
+    {
+      "id": "1",
+      "name": "Bishal Dhakal",
+      "phone": "9865369089",
+      "email": "bishal@example.com",
+      "technology": "ReactJS",
+      "level": "Junior",
+      "experience": "1",
+      "expectedSalary": "Rs 30,000",
+      "interviewStatus": "Shortlisted",
+      "references": "Anil Sharma",
+      "notes": "Strong frontend skills, eager to learn"
+    },
+    {
+      "id": "2",
+      "name": "Aarati Shrestha",
+      "phone": "9846123456",
+      "email": "aarati@example.com",
+      "technology": ".NET",
+      "level": "Mid",
+      "experience": "3",
+      "expectedSalary": "Rs 65,000",
+      "interviewStatus": "First Interview Complete",
+      "references": "Roshan Poudel",
+      "notes": "Experienced with .NET Core and SQL Server"
+    },
+    {
+      "id": "3",
+      "name": "Suraj Tamang",
+      "phone": "9801234567",
+      "email": "suraj@example.com",
+      "technology": "DevOps",
+      "level": "Senior",
+      "experience": "5",
+      "expectedSalary": "Rs 120,000",
+      "interviewStatus": "Second Interview Complete",
+      "references": "Pratik Gurung",
+      "notes": "Expert in AWS, Docker, and Kubernetes"
+    },
+    {
+      "id": "8c48",
+      "name": "Rahul Singh",
+      "phone": "9801234567",
+      "email": "rahul@gmail.com",
+      "technology": "ReactJS",
+      "level": "Junior",
+      "experience": "1",
+      "expectedSalary": "Rs 120,000",
+      "interviewStatus": "First Interview Complete",
+      "references": "Bishal Dhakal",
+      "notes": "Pro react develover"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "1",
+      "title": "Frontend React Challenge",
+      "description": "Build a simple React application with state management",
+      "candidateId": 1
+    },
+    {
+      "id": "2",
+      "title": ".NET API Development",
+      "description": "Create a RESTful API with .NET Core",
+      "candidateId": 2
+    },
+    {
+      "id": "7bc3",
+      "title": "Create Api ",
+      "description": "okakkakkakakkakkaka",
+      "candidateId": "2"
+    }
+  ],
+  "evaluations": [
+    {
+      "id": "1",
+      "candidateId": 1,
+      "behavioralRemarks": "Good communication skills, works well in a team",
+      "technicalRemarks": "Strong understanding of React fundamentals, needs improvement in state management",
+      "date": "2025-06-10"
+    },
+    {
+      "id": "2",
+      "candidateId": 2,
+      "behavioralRemarks": "Professional attitude, excellent problem-solving approach",
+      "technicalRemarks": "Proficient in .NET Core, good database design skills",
+      "date": "2025-06-12"
+    }
+  ],
+  "offerTemplates": [
+    {
+      "id": "1",
+      "title": "Junior Developer Offer",
+      "content": "Dear {{name}},\n\nWe are pleased to offer you the position of {{position}} at our company with a salary of {{salary}}.\n\nPlease let us know your decision within 7 days.\n\nRegards,\nHR Department"
+    },
+    {
+      "id": "2",
+      "title": "Senior Developer Offer",
+      "content": "Dear {{name}},\n\nWe are delighted to offer you the senior position of {{position}} at our company with a salary of {{salary}} and additional benefits.\n\nPlease let us know your decision within 7 days.\n\nRegards,\nHR Department"
+    }
+  ],
+  "interviewSchedules": [
+    {
+      "id": "1",
+      "candidateId": 1,
+      "date": "2025-06-15T10:00:00",
+      "interviewers": [
+        "Rohit Sharma",
+        "Anisha KC"
+      ],
+      "notes": "Technical interview for frontend position"
+    },
+    {
+      "id": "2",
+      "candidateId": 2,
+      "date": "2025-06-16T14:30:00",
+      "interviewers": [
+        "Dipesh Acharya",
+        "Suman Thapa"
+      ],
+      "notes": "Second technical interview"
+    },
+    {
+      "id": "51c5",
+      "candidateId": "8c48",
+      "date": "2025-04-29T23:18:00.000Z",
+      "interviewers": [
+        "Bishal Dhakal"
+      ],
+      "notes": "ramro sanga padera aauni\n"
+    },
+    {
+      "id": "2cfd",
+      "candidateId": "1",
+      "date": "2025-04-24T10:29:10.433Z",
+      "interviewers": [
+        "Bishal Dhakal"
+      ],
+      "notes": ""
+    }
+  ]
+}
