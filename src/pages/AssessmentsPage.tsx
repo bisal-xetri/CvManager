@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchAssessments } from '@/store/slices/assessmentsSlice';
-import { fetchCandidates } from '@/store/slices/candidatesSlice';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  fetchAssessments,
+  deleteAssessment,
+} from "@/store/slices/assessmentsSlice"; // Add deleteAssessment action
+import { fetchCandidates } from "@/store/slices/candidatesSlice";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -11,10 +14,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -22,16 +24,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Link } from 'react-router-dom';
-import { Search, Plus, ClipboardCheck, Loader2 } from 'lucide-react';
-import { AssessmentForm } from '@/components';
+} from "@/components/ui/alert-dialog";
+import { Link } from "react-router-dom";
+import { Search, Plus, ClipboardCheck, Loader2, Trash2 } from "lucide-react";
+import { AssessmentForm } from "@/components";
 
 export default function AssessmentsPage() {
   const dispatch = useAppDispatch();
   const { assessments, loading } = useAppSelector((state) => state.assessments);
   const { candidates } = useAppSelector((state) => state.candidates);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAssessment, setSelectedAssessment] = useState<number | null>(
+    null
+  ); // State to track selected assessment for deletion
 
   useEffect(() => {
     dispatch(fetchAssessments());
@@ -39,12 +44,21 @@ export default function AssessmentsPage() {
   }, [dispatch]);
 
   const getCandidateName = (candidateId: string | number) => {
-    const candidate = candidates.find(c => c.id === candidateId);
-    return candidate ? candidate.name : 'Unknown Candidate';
+    const candidate = candidates.find((c) => c.id === candidateId);
+    return candidate ? candidate.name : "Unknown Candidate";
   };
 
-  const filteredAssessments = assessments.filter(assessment => {
-    const candidateName = getCandidateName(assessment.candidateId).toLowerCase();
+  const handleConfirmDelete = () => {
+    if (selectedAssessment) {
+      dispatch(deleteAssessment(selectedAssessment)); // Dispatch deletion action
+      setSelectedAssessment(null); // Reset selected assessment after deletion
+    }
+  };
+
+  const filteredAssessments = assessments.filter((assessment) => {
+    const candidateName = getCandidateName(
+      assessment.candidateId
+    ).toLowerCase();
     return (
       assessment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       assessment.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,6 +68,7 @@ export default function AssessmentsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold">Assessments</h1>
         <AlertDialog>
@@ -71,7 +86,11 @@ export default function AssessmentsPage() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="space-y-4 py-4">
-              <AssessmentForm candidateId={candidates.length > 0 ? candidates[0].id.toString() : "1"} />
+              <AssessmentForm
+                candidateId={
+                  candidates.length > 0 ? candidates[0].id.toString() : "1"
+                }
+              />
             </div>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -109,11 +128,52 @@ export default function AssessmentsPage() {
               <CardContent>
                 <p className="text-gray-700">{assessment.description}</p>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex justify-between space-x-2">
                 <Link to={`/candidates/${assessment.candidateId}`}>
-                  <Button variant="outline" size="sm">View Candidate</Button>
+                  <Button variant="outline" size="sm">
+                    View Candidate
+                  </Button>
                 </Link>
-                <Button variant="outline" size="sm">Edit Assessment</Button>
+
+                <Button variant="outline" size="sm">
+                  Edit
+                </Button>
+                {/* Delete Button with Modal Confirmation */}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() =>
+                        setSelectedAssessment(Number(assessment.id))
+                      }
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-sm">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this assessment? This
+                        action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        onClick={() => setSelectedAssessment(null)}
+                      >
+                        Cancel
+                      </AlertDialogCancel>
+                      <Button
+                        variant="destructive"
+                        onClick={handleConfirmDelete}
+                      >
+                        Confirm
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </CardFooter>
             </Card>
           ))}
@@ -134,7 +194,11 @@ export default function AssessmentsPage() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-4 py-4">
-                <AssessmentForm candidateId={candidates.length > 0 ? candidates[0].id.toString() : "1"} />
+                <AssessmentForm
+                  candidateId={
+                    candidates.length > 0 ? candidates[0].id.toString() : "1"
+                  }
+                />
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>

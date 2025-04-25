@@ -1,67 +1,68 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
+import { createBrowserRouter } from "react-router-dom";
+import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
 
 // Pages
-import HomePage from '@/pages/HomePage';
-import LoginPage from '@/pages/LoginPage';
-import DashboardPage from '@/pages/DashboardPage';
-import CandidatesPage from '@/pages/CandidatesPage';
-import CandidateNewPage from '@/pages/CandidateNewPage';
-import CandidateEditPage from '@/pages/CandidateEditPage';
-import CandidateDetailPage from '@/pages/CandidateDetailPage';
-import AssessmentsPage from '@/pages/AssessmentsPage';
-import InterviewsPage from '@/pages/InterviewsPage';
-import OffersPage from '@/pages/OffersPage';
+import HomePage from "@/pages/HomePage";
+import LoginPage from "@/pages/LoginPage";
+import DashboardPage from "@/pages/DashboardPage";
+import CandidatesPage from "@/pages/CandidatesPage";
+import CandidateNewPage from "@/pages/CandidateNewPage";
+import CandidateEditPage from "@/pages/CandidateEditPage";
+import CandidateDetailPage from "@/pages/CandidateDetailPage";
+import AssessmentsPage from "@/pages/AssessmentsPage";
+import InterviewsPage from "@/pages/InterviewsPage";
+import OffersPage from "@/pages/OffersPage";
+import NotFound from "@/pages/NotFound";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <HomePage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <LoginPage />,
   },
   {
     element: <AuthenticatedLayout />,
     children: [
       {
-        path: '/dashboard',
+        path: "/dashboard",
         element: <DashboardPage />,
       },
       {
-        path: '/candidates',
+        path: "/candidates",
         element: <CandidatesPage />,
       },
       {
-        path: '/candidates/new',
+        path: "/candidates/new",
         element: <CandidateNewPage />,
       },
       {
-        path: '/candidates/edit/:id',
+        path: "/candidates/edit/:id",
         element: <CandidateEditPage />,
       },
       {
-        path: '/candidates/:id',
+        path: "/candidates/:id",
         element: <CandidateDetailPage />,
       },
       {
-        path: '/assessments',
+        path: "/assessments",
         element: <AssessmentsPage />,
       },
       {
-        path: '/interviews',
+        path: "/interviews",
         element: <InterviewsPage />,
       },
       {
-        path: '/offers',
+        path: "/offers",
         element: <OffersPage />,
       },
     ],
   },
   {
-    path: '*',
-    element: <Navigate to="/" replace />,
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

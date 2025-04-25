@@ -436,7 +436,6 @@ export default function InterviewsPage() {
                 mode="single"
                 selected={selectedDate}
                 onSelect={setSelectedDate}
-                className="rounded-md border text-white"
                 initialFocus
               />
             </CardContent>

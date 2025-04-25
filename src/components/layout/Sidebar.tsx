@@ -76,7 +76,6 @@ export default function Sidebar() {
           ) : (
             <>
               <ChevronLeft className="h-5 w-5 mr-2" />
-              <span>Collapse</span>
             </>
           )}
         </Button>

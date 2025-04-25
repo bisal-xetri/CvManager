@@ -50,7 +50,8 @@
       "expectedSalary": "Rs 120,000",
       "interviewStatus": "First Interview Complete",
       "references": "Bishal Dhakal",
-      "notes": "Pro react develover"
+      "notes": "Pro react develover",
+      "cv": "AN intern Report sijan_1.docx"
     }
   ],
   "assessments": [
@@ -67,9 +68,9 @@
       "candidateId": 2
     },
     {
-      "id": "7bc3",
-      "title": "Create Api ",
-      "description": "okakkakkakakkakkaka",
+      "id": "94ce",
+      "title": "k cha",
+      "description": "thik cha",
       "candidateId": "2"
     }
   ],
@@ -87,6 +88,13 @@
       "behavioralRemarks": "Professional attitude, excellent problem-solving approach",
       "technicalRemarks": "Proficient in .NET Core, good database design skills",
       "date": "2025-06-12"
+    },
+    {
+      "id": "46e9",
+      "candidateId": "8c48",
+      "behavioralRemarks": "good communication works",
+      "technicalRemarks": "problem solving nice\n",
+      "date": "2025-04-25"
     }
   ],
   "offerTemplates": [
@@ -139,6 +147,33 @@
         "Bishal Dhakal"
       ],
       "notes": ""
+    },
+    {
+      "id": "fc92",
+      "candidateId": "8c48",
+      "date": "2025-04-24T18:15:00.000Z",
+      "interviewers": [
+        "Bishal Dhakal"
+      ],
+      "notes": "be reay"
+    },
+    {
+      "id": "99ab",
+      "candidateId": "3",
+      "date": "2025-04-24T14:05:10.566Z",
+      "interviewers": [
+        "Bishal Dhakal"
+      ],
+      "notes": "okey cha ta"
+    },
+    {
+      "id": "5481",
+      "candidateId": "2",
+      "date": "2025-04-28T18:15:00.000Z",
+      "interviewers": [
+        "Rahul singh"
+      ],
+      "notes": "about new ji=oin"
     }
   ]
 }

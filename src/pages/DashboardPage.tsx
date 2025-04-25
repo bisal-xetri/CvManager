@@ -109,7 +109,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Link to="/candidates/new">
@@ -124,81 +124,95 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  Total Candidates
-                </span>
-                <Users className="h-5 w-5 text-gray-400" />
+            <Link to="/candidates">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    Total Candidates
+                  </span>
+                  <Users className="h-5 w-5 text-gray-400" />
+                </div>
+                <p className="text-3xl font-bold">{candidates.length}</p>
               </div>
-              <p className="text-3xl font-bold">{candidates.length}</p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  Shortlisted
-                </span>
-                <Clock className="h-5 w-5 text-blue-400" />
+            <Link to="/candidates?status=shortlisted">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    Shortlisted
+                  </span>
+                  <Clock className="h-5 w-5 text-blue-400" />
+                </div>
+                <p className="text-3xl font-bold">{statusCounts.shortlisted}</p>
               </div>
-              <p className="text-3xl font-bold">{statusCounts.shortlisted}</p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  In Interview
-                </span>
-                <Calendar className="h-5 w-5 text-purple-400" />
+            <Link to="/interviews">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    In Interview
+                  </span>
+                  <Calendar className="h-5 w-5 text-purple-400" />
+                </div>
+                <p className="text-3xl font-bold">
+                  {statusCounts.firstInterviewComplete +
+                    statusCounts.secondInterviewComplete}
+                </p>
               </div>
-              <p className="text-3xl font-bold">
-                {statusCounts.firstInterviewComplete +
-                  statusCounts.secondInterviewComplete}
-              </p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Hired</span>
-                <UserCheck className="h-5 w-5 text-green-400" />
+            <Link to="/candidates?status=hired">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    Hired
+                  </span>
+                  <UserCheck className="h-5 w-5 text-green-400" />
+                </div>
+                <p className="text-3xl font-bold">{statusCounts.hired}</p>
               </div>
-              <p className="text-3xl font-bold">{statusCounts.hired}</p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  Rejected
-                </span>
-                <UserX className="h-5 w-5 text-red-400" />
+            <Link to="/candidates?status=rejected">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    Rejected
+                  </span>
+                  <UserX className="h-5 w-5 text-red-400" />
+                </div>
+                <p className="text-3xl font-bold">{statusCounts.rejected}</p>
               </div>
-              <p className="text-3xl font-bold">{statusCounts.rejected}</p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">
-                  Blacklisted
-                </span>
-                <BarChart3 className="h-5 w-5 text-gray-400" />
+            <Link to="/candidates?status=blacklisted">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-500">
+                    Blacklisted
+                  </span>
+                  <BarChart3 className="h-5 w-5 text-gray-400" />
+                </div>
+                <p className="text-3xl font-bold">{statusCounts.blacklisted}</p>
               </div>
-              <p className="text-3xl font-bold">{statusCounts.blacklisted}</p>
-            </div>
+            </Link>
           </CardContent>
         </Card>
       </div>

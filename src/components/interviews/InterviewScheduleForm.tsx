@@ -27,7 +27,13 @@ interface InterviewScheduleFormProps {
 }
 
 const validationSchema = Yup.object({
-  date: Yup.date().required("Interview date is required"),
+  date: Yup.date()
+    .required("Interview date is required")
+    .test(
+      "is-future-date",
+      "Interview date and time must be in the future",
+      (value) => value && new Date(value) > new Date()
+    ),
   interviewers: Yup.array()
     .of(Yup.string().required("Interviewer name is required"))
     .min(1, "At least one interviewer is required"),

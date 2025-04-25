@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchCandidateById, updateCandidate, deleteCandidate } from '@/store/slices/candidatesSlice';
-import { fetchEvaluationsByCandidateId } from '@/store/slices/evaluationsSlice';
-import { fetchAssessmentsByCandidateId } from '@/store/slices/assessmentsSlice';
-import { fetchInterviewSchedulesByCandidateId } from '@/store/slices/interviewSchedulesSlice';
-import { toast } from 'react-toastify';
-import { format } from 'date-fns';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  fetchCandidateById,
+  updateCandidate,
+  deleteCandidate,
+} from "@/store/slices/candidatesSlice";
+import { fetchEvaluationsByCandidateId } from "@/store/slices/evaluationsSlice";
+import { fetchAssessmentsByCandidateId } from "@/store/slices/assessmentsSlice";
+import { fetchInterviewSchedulesByCandidateId } from "@/store/slices/interviewSchedulesSlice";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -14,13 +18,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,58 +30,64 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  BriefcaseBusiness, 
-  Calendar, 
-  Edit, 
-  Trash2, 
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import {
+  User,
+  Phone,
+  Mail,
+  BriefcaseBusiness,
+  Calendar,
+  Edit,
+  Trash2,
   ArrowLeft,
   FileText,
   ClipboardList,
   Clock,
-  AlertCircle
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import AssessmentForm from '@/components/assessments/AssessmentForm';
-import EvaluationForm from '@/components/evaluations/EvaluationForm';
-import InterviewScheduleForm from '@/components/interviews/InterviewScheduleForm';
-import type { InterviewStatus } from '@/types';
+  AlertCircle,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import AssessmentForm from "@/components/assessments/AssessmentForm";
+import EvaluationForm from "@/components/evaluations/EvaluationForm";
+import InterviewScheduleForm from "@/components/interviews/InterviewScheduleForm";
+import type { InterviewStatus } from "@/types";
 
 export default function CandidateDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
-  const { candidate, loading, error } = useAppSelector((state) => state.candidates);
+
+  const { candidate, loading, error } = useAppSelector(
+    (state) => state.candidates
+  );
   const { candidateEvaluations } = useAppSelector((state) => state.evaluations);
   const { candidateAssessments } = useAppSelector((state) => state.assessments);
-  const { candidateInterviewSchedules } = useAppSelector((state) => state.interviewSchedules);
-  
-  const [interviewStatus, setInterviewStatus] = useState<InterviewStatus | ''>('');
+  const { candidateInterviewSchedules } = useAppSelector(
+    (state) => state.interviewSchedules
+  );
+
+  const [interviewStatus, setInterviewStatus] = useState<InterviewStatus | "">(
+    ""
+  );
   const [isStatusUpdating, setIsStatusUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const interviewStatuses: InterviewStatus[] = [
-    'Shortlisted',
-    'First Interview Complete',
-    'Second Interview Complete',
-    'Hired',
-    'Rejected',
-    'Blacklisted',
+    "Shortlisted",
+    "First Interview Complete",
+    "Second Interview Complete",
+    "Hired",
+    "Rejected",
+    "Blacklisted",
   ];
 
   useEffect(() => {
@@ -102,16 +107,18 @@ export default function CandidateDetails() {
 
   const handleStatusChange = async (status: string) => {
     if (!candidate) return;
-    
+
     setIsStatusUpdating(true);
     try {
-      await dispatch(updateCandidate({
-        ...candidate,
-        interviewStatus: status as InterviewStatus
-      }));
-      toast.success('Status updated successfully');
+      await dispatch(
+        updateCandidate({
+          ...candidate,
+          interviewStatus: status as InterviewStatus,
+        })
+      );
+      toast.success("Status updated successfully");
     } catch (error) {
-      toast.error('Failed to update status');
+      toast.error("Failed to update status");
     } finally {
       setIsStatusUpdating(false);
     }
@@ -119,14 +126,14 @@ export default function CandidateDetails() {
 
   const handleDeleteCandidate = async () => {
     if (!candidate) return;
-    
+
     setIsDeleting(true);
     try {
       await dispatch(deleteCandidate(candidate.id));
-      toast.success('Candidate deleted successfully');
-      navigate('/candidates');
+      toast.success("Candidate deleted successfully");
+      navigate("/candidates");
     } catch (error) {
-      toast.error('Failed to delete candidate');
+      toast.error("Failed to delete candidate");
     } finally {
       setIsDeleting(false);
     }
@@ -144,9 +151,11 @@ export default function CandidateDetails() {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">
         <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Candidate</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Error Loading Candidate
+        </h2>
         <p className="text-gray-600 mb-4">{error}</p>
-        <Button onClick={() => navigate('/candidates')}>
+        <Button onClick={() => navigate("/candidates")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Candidates
         </Button>
@@ -158,9 +167,13 @@ export default function CandidateDetails() {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">
         <AlertCircle className="h-12 w-12 text-amber-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Candidate Not Found</h2>
-        <p className="text-gray-600 mb-4">The candidate you're looking for doesn't exist or has been removed.</p>
-        <Button onClick={() => navigate('/candidates')}>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Candidate Not Found
+        </h2>
+        <p className="text-gray-600 mb-4">
+          The candidate you're looking for doesn't exist or has been removed.
+        </p>
+        <Button onClick={() => navigate("/candidates")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Candidates
         </Button>
@@ -170,27 +183,27 @@ export default function CandidateDetails() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Shortlisted':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'First Interview Complete':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'Second Interview Complete':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'Hired':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'Rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'Blacklisted':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "Shortlisted":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "First Interview Complete":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "Second Interview Complete":
+        return "bg-indigo-100 text-indigo-800 border-indigo-200";
+      case "Hired":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "Rejected":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "Blacklisted":
+        return "bg-gray-100 text-gray-800 border-gray-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <Button variant="outline" onClick={() => navigate('/candidates')}>
+        <Button variant="outline" onClick={() => navigate("/candidates")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
@@ -212,17 +225,17 @@ export default function CandidateDetails() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the candidate
-                  and all associated data.
+                  This action cannot be undone. This will permanently delete the
+                  candidate and all associated data.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
+                <AlertDialogAction
                   onClick={handleDeleteCandidate}
                   className="bg-red-500 hover:bg-red-600"
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete'}
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -234,22 +247,30 @@ export default function CandidateDetails() {
         <CardHeader className="pb-4">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-2xl font-bold">{candidate.name}</CardTitle>
+              <CardTitle className="text-2xl font-bold">
+                {candidate.name}
+              </CardTitle>
               <CardDescription className="flex items-center mt-1">
                 <BriefcaseBusiness className="h-4 w-4 mr-1" />
-                {candidate.technology} • {candidate.level} • {candidate.experience} {parseInt(candidate.experience) === 1 ? 'year' : 'years'} • {candidate.expectedSalary}
+                {candidate.technology} • {candidate.level} •{" "}
+                {candidate.experience}{" "}
+                {parseInt(candidate.experience) === 1 ? "year" : "years"} •{" "}
+                {candidate.expectedSalary}
               </CardDescription>
             </div>
             <div className="flex flex-col items-end space-y-2">
-              <Badge 
-                variant="outline" 
-                className={cn("px-3 py-1 text-sm", getStatusColor(candidate.interviewStatus))}
+              <Badge
+                variant="outline"
+                className={cn(
+                  "px-3 py-1 text-sm",
+                  getStatusColor(candidate.interviewStatus)
+                )}
               >
                 {candidate.interviewStatus}
               </Badge>
-              
-              <Select 
-                value={interviewStatus} 
+
+              <Select
+                value={interviewStatus}
                 onValueChange={handleStatusChange}
               >
                 <SelectTrigger className="w-[200px]">
@@ -269,7 +290,9 @@ export default function CandidateDetails() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Contact Information
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 mr-3 text-gray-500" />
@@ -287,7 +310,7 @@ export default function CandidateDetails() {
                 )}
               </div>
             </div>
-            
+
             {candidate.notes && (
               <div>
                 <h3 className="text-lg font-semibold mb-4">Notes</h3>
@@ -313,7 +336,7 @@ export default function CandidateDetails() {
             Interviews
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="evaluations" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Candidate Evaluations</h2>
@@ -332,7 +355,7 @@ export default function CandidateDetails() {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          
+
           {candidateEvaluations.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8">
@@ -350,19 +373,28 @@ export default function CandidateDetails() {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center">
                       <Calendar className="h-5 w-5 mr-2 text-gray-500" />
-                      Evaluation from {format(new Date(evaluation.date), 'MMM d, yyyy')}
+                      Evaluation from{" "}
+                      {format(new Date(evaluation.date), "MMM d, yyyy")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pb-4">
                     <div className="space-y-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500 mb-1">Behavioral Assessment</h4>
-                        <p className="text-gray-700">{evaluation.behavioralRemarks}</p>
+                        <h4 className="text-sm font-medium text-gray-500 mb-1">
+                          Behavioral Assessment
+                        </h4>
+                        <p className="text-gray-700">
+                          {evaluation.behavioralRemarks}
+                        </p>
                       </div>
                       <Separator />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500 mb-1">Technical Assessment</h4>
-                        <p className="text-gray-700">{evaluation.technicalRemarks}</p>
+                        <h4 className="text-sm font-medium text-gray-500 mb-1">
+                          Technical Assessment
+                        </h4>
+                        <p className="text-gray-700">
+                          {evaluation.technicalRemarks}
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -371,7 +403,7 @@ export default function CandidateDetails() {
             </div>
           )}
         </TabsContent>
-        
+
         <TabsContent value="assessments" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Assigned Assessments</h2>
@@ -390,12 +422,14 @@ export default function CandidateDetails() {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          
+
           {candidateAssessments.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8">
                 <ClipboardList className="h-12 w-12 text-gray-300 mb-4" />
-                <p className="text-gray-500 text-center">No assessments assigned</p>
+                <p className="text-gray-500 text-center">
+                  No assessments assigned
+                </p>
                 <p className="text-gray-400 text-sm text-center mt-1">
                   Assign technical assessments to evaluate this candidate
                 </p>
@@ -412,14 +446,16 @@ export default function CandidateDetails() {
                     <p className="text-gray-700">{assessment.description}</p>
                   </CardContent>
                   <CardFooter className="flex justify-end">
-                    <Button variant="outline" size="sm">View Details</Button>
+                    <Button variant="outline" size="sm">
+                      View Details
+                    </Button>
                   </CardFooter>
                 </Card>
               ))}
             </div>
           )}
         </TabsContent>
-        
+
         <TabsContent value="interviews" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Interview Schedule</h2>
@@ -431,8 +467,8 @@ export default function CandidateDetails() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Schedule New Interview</AlertDialogTitle>
                 </AlertDialogHeader>
-                <InterviewScheduleForm 
-                  candidateId={candidate.id.toString()} 
+                <InterviewScheduleForm
+                  candidateId={candidate.id.toString()}
                   candidateName={candidate.name}
                   candidateEmail={candidate.email}
                 />
@@ -442,12 +478,14 @@ export default function CandidateDetails() {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          
+
           {candidateInterviewSchedules.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8">
                 <Calendar className="h-12 w-12 text-gray-300 mb-4" />
-                <p className="text-gray-500 text-center">No interviews scheduled</p>
+                <p className="text-gray-500 text-center">
+                  No interviews scheduled
+                </p>
                 <p className="text-gray-400 text-sm text-center mt-1">
                   Schedule an interview with this candidate
                 </p>
@@ -455,52 +493,68 @@ export default function CandidateDetails() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {candidateInterviewSchedules
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+              {[...candidateInterviewSchedules] // Create a copy to avoid mutations
+                .sort(
+                  (a, b) =>
+                    new Date(a.date).getTime() - new Date(b.date).getTime()
+                )
                 .map((schedule) => {
                   const interviewDate = new Date(schedule.date);
                   const isPast = interviewDate < new Date();
 
                   return (
-                    <Card key={schedule.id} className={cn(
-                      isPast ? "bg-gray-50" : "bg-white"
-                    )}>
+                    <Card
+                      key={schedule.id}
+                      className={cn(isPast ? "bg-gray-50" : "bg-white")}
+                    >
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex justify-between">
                           <div className="flex items-center">
                             <Calendar className="h-5 w-5 mr-2 text-gray-500" />
-                            {format(interviewDate, 'EEEE, MMMM d, yyyy')}
+                            {format(interviewDate, "EEEE, MMMM d, yyyy")}
                           </div>
                           {isPast ? (
-                            <Badge variant="outline" className="bg-gray-100 text-gray-800">
+                            <Badge
+                              variant="outline"
+                              className="bg-gray-100 text-gray-800"
+                            >
                               Past
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-green-100 text-green-800">
+                            <Badge
+                              variant="outline"
+                              className="bg-green-100 text-green-800"
+                            >
                               Upcoming
                             </Badge>
                           )}
                         </CardTitle>
                         <CardDescription className="flex items-center">
                           <Clock className="h-4 w-4 mr-1" />
-                          {format(interviewDate, 'h:mm a')}
+                          {format(interviewDate, "h:mm a")}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
                           <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Interviewers</h4>
+                            <h4 className="text-sm font-medium text-gray-500 mb-1">
+                              Interviewers
+                            </h4>
                             <div className="flex flex-wrap gap-2">
-                              {schedule.interviewers.map((interviewer, index) => (
-                                <Badge key={index} variant="secondary">
-                                  {interviewer}
-                                </Badge>
-                              ))}
+                              {schedule.interviewers.map(
+                                (interviewer, index) => (
+                                  <Badge key={index} variant="secondary">
+                                    {interviewer}
+                                  </Badge>
+                                )
+                              )}
                             </div>
                           </div>
                           {schedule.notes && (
                             <div>
-                              <h4 className="text-sm font-medium text-gray-500 mb-1">Notes</h4>
+                              <h4 className="text-sm font-medium text-gray-500 mb-1">
+                                Notes
+                              </h4>
                               <p className="text-gray-700">{schedule.notes}</p>
                             </div>
                           )}
@@ -513,7 +567,7 @@ export default function CandidateDetails() {
                           </Button>
                         )}
                         <Button variant="secondary" size="sm">
-                          {isPast ? 'View Details' : 'Send Reminder'}
+                          {isPast ? "View Details" : "Send Reminder"}
                         </Button>
                       </CardFooter>
                     </Card>

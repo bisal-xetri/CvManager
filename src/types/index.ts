@@ -11,19 +11,20 @@ export interface Candidate {
   interviewStatus: InterviewStatus;
   references: string;
   notes?: string;
+  cv: string;
 }
 
-export type Technology = '.NET' | 'ReactJS' | 'DevOps' | 'QA';
+export type Technology = ".NET" | "ReactJS" | "DevOps" | "QA";
 
-export type Level = 'Junior' | 'Mid' | 'Senior';
+export type Level = "Junior" | "Mid" | "Senior";
 
-export type InterviewStatus = 
-  | 'Shortlisted'
-  | 'First Interview Complete'
-  | 'Second Interview Complete'
-  | 'Hired'
-  | 'Rejected'
-  | 'Blacklisted';
+export type InterviewStatus =
+  | "Shortlisted"
+  | "First Interview Complete"
+  | "Second Interview Complete"
+  | "Hired"
+  | "Rejected"
+  | "Blacklisted";
 
 // Assessment Types
 export interface Assessment {

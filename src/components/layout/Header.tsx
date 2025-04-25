@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { signOut } from "@/store/slices/authSlice";
 import { Search, Menu, X, User, LogOut, Settings } from "lucide-react";
@@ -16,10 +16,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
     dispatch(signOut());
@@ -29,82 +30,62 @@ export default function Header() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+      setSearchTerm(""); // Clear the search bar after submission
+    }
   };
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white border-b border-gray-200">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo and main navigation */}
+          {/* Left: Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/dashboard" className="flex items-center">
               <span className="text-xl font-bold text-hrm-purple">
                 CV Nexus
               </span>
               <span className="ml-1 text-sm text-gray-600">HR Hub</span>
             </Link>
-
-            {/* Desktop navigation */}
-            <nav className="hidden md:ml-8 md:flex md:space-x-8">
-              <Link
-                to="/dashboard"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/candidates"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
-              >
-                Candidates
-              </Link>
-              <Link
-                to="/assessments"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
-              >
-                Assessments
-              </Link>
-              <Link
-                to="/interviews"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
-              >
-                Interviews
-              </Link>
-              <Link
-                to="/offers"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
-              >
-                Offers
-              </Link>
-            </nav>
           </div>
 
-          {/* Right side actions */}
+          {/* Center: Search */}
+          <div className="hidden md:flex flex-grow justify-center">
+            <form className="relative w-full max-w-md" onSubmit={handleSearch}>
+              <Input
+                type="search"
+                placeholder="Search candidates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+              <button
+                type="submit"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
+
+          {/* Right: User Menu and Mobile Menu */}
           <div className="flex items-center space-x-4">
-            {/* Search */}
-            <div className="relative">
-              {isSearchOpen ? (
-                <div className="absolute right-0 top-0 w-64 flex">
-                  <Input
-                    type="search"
-                    placeholder="Search candidates..."
-                    className="w-full"
-                    autoFocus
-                  />
-                  <span onClick={toggleSearch} className="ml-2 cursor-pointer">
-                    <X className="h-4 w-4" />
-                  </span>
-                </div>
-              ) : (
-                <span
-                  onClick={toggleSearch}
-                  className="hidden md:flex cursor-pointer"
-                >
-                  <Search className="h-5 w-5" />
-                </span>
-              )}
+            {/* Mobile Search (for small screens) */}
+            <Input
+              type="search"
+              placeholder="Search candidates..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 md:hidden"
+            />
+            <div className="flex md:hidden">
+              <Search
+                className="h-5 w-5 cursor-pointer"
+                onClick={() => navigate(`/search`)} // Navigate to search page for mobile
+              />
             </div>
 
             {/* User menu */}
@@ -209,13 +190,6 @@ export default function Header() {
             >
               Offers
             </Link>
-            <div className="relative w-full py-2">
-              <Input
-                type="search"
-                placeholder="Search candidates..."
-                className="w-full"
-              />
-            </div>
           </nav>
         </div>
       )}
