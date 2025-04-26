@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { Assessment } from '@/types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Assessment } from "@/types";
 
 // API URL
-const API_URL = 'http://localhost:3001/assessments';
+const API_URL = "http://localhost:3001/assessments";
 
 // Initial state
 interface AssessmentsState {
@@ -21,12 +21,12 @@ const initialState: AssessmentsState = {
 
 // Async thunks
 export const fetchAssessments = createAsyncThunk(
-  'assessments/fetchAssessments',
+  "assessments/fetchAssessments",
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Failed to fetch assessments');
+        throw new Error("Failed to fetch assessments");
       }
       const data = await response.json();
       return data as Assessment[];
@@ -37,12 +37,12 @@ export const fetchAssessments = createAsyncThunk(
 );
 
 export const fetchAssessmentsByCandidateId = createAsyncThunk(
-  'assessments/fetchAssessmentsByCandidateId',
+  "assessments/fetchAssessmentsByCandidateId",
   async (candidateId: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}?candidateId=${candidateId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch candidate assessments');
+        throw new Error("Failed to fetch candidate assessments");
       }
       const data = await response.json();
       return data as Assessment[];
@@ -53,18 +53,18 @@ export const fetchAssessmentsByCandidateId = createAsyncThunk(
 );
 
 export const createAssessment = createAsyncThunk(
-  'assessments/createAssessment',
-  async (assessment: Omit<Assessment, 'id'>, { rejectWithValue }) => {
+  "assessments/createAssessment",
+  async (assessment: Omit<Assessment, "id">, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(assessment),
       });
       if (!response.ok) {
-        throw new Error('Failed to create assessment');
+        throw new Error("Failed to create assessment");
       }
       const data = await response.json();
       return data as Assessment;
@@ -75,18 +75,18 @@ export const createAssessment = createAsyncThunk(
 );
 
 export const updateAssessment = createAsyncThunk(
-  'assessments/updateAssessment',
+  "assessments/updateAssessment",
   async (assessment: Assessment, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${assessment.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(assessment),
       });
       if (!response.ok) {
-        throw new Error('Failed to update assessment');
+        throw new Error("Failed to update assessment");
       }
       const data = await response.json();
       return data as Assessment;
@@ -97,14 +97,14 @@ export const updateAssessment = createAsyncThunk(
 );
 
 export const deleteAssessment = createAsyncThunk(
-  'assessments/deleteAssessment',
+  "assessments/deleteAssessment",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error('Failed to delete assessment');
+        throw new Error("Failed to delete assessment");
       }
       return id;
     } catch (error) {
@@ -115,7 +115,7 @@ export const deleteAssessment = createAsyncThunk(
 
 // Slice
 const assessmentsSlice = createSlice({
-  name: 'assessments',
+  name: "assessments",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -153,8 +153,11 @@ const assessmentsSlice = createSlice({
       })
       .addCase(createAssessment.fulfilled, (state, action) => {
         state.assessments.push(action.payload);
-        if (state.candidateAssessments.length > 0 && 
-            state.candidateAssessments[0].candidateId === action.payload.candidateId) {
+        if (
+          state.candidateAssessments.length > 0 &&
+          state.candidateAssessments[0].candidateId ===
+            action.payload.candidateId
+        ) {
           state.candidateAssessments.push(action.payload);
         }
         state.loading = false;
@@ -175,14 +178,14 @@ const assessmentsSlice = createSlice({
         if (index !== -1) {
           state.assessments[index] = action.payload;
         }
-        
+
         const candidateIndex = state.candidateAssessments.findIndex(
           (assessment) => assessment.id === action.payload.id
         );
         if (candidateIndex !== -1) {
           state.candidateAssessments[candidateIndex] = action.payload;
         }
-        
+
         state.loading = false;
       })
       .addCase(updateAssessment.rejected, (state, action) => {

@@ -322,7 +322,7 @@ export default function CandidateDetails() {
       </Card>
 
       <Tabs defaultValue="evaluations">
-        <TabsList className="grid grid-cols-3 mb-6">
+        <TabsList className="grid gap-1 grid-cols-3 mb-6">
           <TabsTrigger value="evaluations">
             <FileText className="h-4 w-4 mr-2" />
             Evaluations

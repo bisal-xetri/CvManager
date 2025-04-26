@@ -1,11 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { 
-  signInWithPopup, 
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  signInWithPopup,
   signOut as firebaseSignOut,
   GoogleAuthProvider,
-} from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
-import type { AuthState, User } from '@/types';
+} from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
+import type { AuthState, User } from "@/types";
 
 // Initial state
 const initialState: AuthState = {
@@ -16,21 +16,21 @@ const initialState: AuthState = {
 
 // Async thunks
 export const signInWithGoogle = createAsyncThunk(
-  'auth/signInWithGoogle',
+  "auth/signInWithGoogle",
   async (_, { rejectWithValue }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      
+
       if (!credential) {
-        throw new Error('No credential returned from Firebase');
+        throw new Error("No credential returned from Firebase");
       }
-      
+
       const user = result.user;
       return {
         uid: user.uid,
-        email: user.email || '',
-        displayName: user.displayName || '',
+        email: user.email || "",
+        displayName: user.displayName || "",
         photoURL: user.photoURL || undefined,
       } as User;
     } catch (error) {
@@ -40,7 +40,7 @@ export const signInWithGoogle = createAsyncThunk(
 );
 
 export const signOut = createAsyncThunk(
-  'auth/signOut',
+  "auth/signOut",
   async (_, { rejectWithValue }) => {
     try {
       await firebaseSignOut(auth);
@@ -53,7 +53,7 @@ export const signOut = createAsyncThunk(
 
 // Slice
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setUser: (state, action) => {

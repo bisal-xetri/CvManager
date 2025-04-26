@@ -23,6 +23,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { CandidateCard } from "@/components";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
@@ -123,7 +124,7 @@ export default function DashboardPage() {
       {/* Status Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-6 ">
             <Link to="/candidates">
               <div className="flex flex-col space-y-2">
                 <div className="flex items-center justify-between">
@@ -220,8 +221,8 @@ export default function DashboardPage() {
       {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Candidates */}
-        <Card className="overflow-hidden">
-          <CardHeader>
+        <Card className="flex flex-col max-h-[500px]">
+          <CardHeader className="flex-none border-b">
             <div className="flex justify-between items-center">
               <CardTitle>Recent Candidates</CardTitle>
               <Link to="/candidates">
@@ -235,18 +236,20 @@ export default function DashboardPage() {
               Latest candidates added to the system
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="grid grid-cols-1 md:grid-cols-1 2xl:grid-cols-2 gap-4 p-6">
-              {recentCandidates.length > 0 ? (
-                recentCandidates.map((candidate) => (
-                  <CandidateCard key={candidate.id} candidate={candidate} />
-                ))
-              ) : (
-                <div className="col-span-2 py-8 text-center text-gray-500">
-                  No candidates found
-                </div>
-              )}
-            </div>
+          <CardContent className="flex-1 p-0 overflow-hidden">
+            <ScrollArea className="h-[calc(500px-145px)] p-6">
+              <div className="grid grid-cols-1 md:grid-cols-1 2xl:grid-cols-2 gap-4">
+                {recentCandidates.length > 0 ? (
+                  recentCandidates.map((candidate) => (
+                    <CandidateCard key={candidate.id} candidate={candidate} />
+                  ))
+                ) : (
+                  <div className="col-span-2 py-8 text-center text-muted-foreground">
+                    No candidates found
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 

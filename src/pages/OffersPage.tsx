@@ -26,6 +26,8 @@ import { Plus, FileText, Loader2, Mail } from "lucide-react";
 import { OfferTemplateForm, OfferGenerator } from "@/components";
 import type { Candidate } from "@/types";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 export default function OffersPage() {
   const dispatch = useAppDispatch();
   const { offerTemplates, loading } = useAppSelector(
@@ -130,58 +132,61 @@ export default function OffersPage() {
       </div>
 
       <Tabs defaultValue="templates" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full gap-1 grid-cols-2">
           <TabsTrigger value="templates">Offer Templates</TabsTrigger>
           <TabsTrigger value="sent">Sent Offers</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="templates" className="space-y-6 pt-6">
+        <TabsContent value="templates" className="h-full">
           {loading ? (
             <div className="flex justify-center items-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : offerTemplates.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {offerTemplates.map((template) => (
-                <Card key={template.id}>
-                  <CardHeader>
-                    <CardTitle>{template.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans border p-3 rounded-md bg-gray-50 max-h-32 overflow-y-auto">
-                      {template.content}
-                    </pre>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          Edit
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="max-w-2xl">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Edit Offer Template
-                          </AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <div className="py-4">
-                          <OfferTemplateForm
-                            initialValues={template}
-                            isEditing={true}
-                          />
-                        </div>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-
-                    <Button size="sm">Use Template</Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+            <ScrollArea className="h-[calc(100vh-200px)] pr-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+                {offerTemplates.map((template) => (
+                  <Card key={template.id}>
+                    <CardHeader>
+                      <CardTitle>{template.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className="h-32 rounded-md border bg-gray-50 p-3">
+                        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
+                          {template.content}
+                        </pre>
+                      </ScrollArea>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            Edit
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="max-w-2xl">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Edit Offer Template
+                            </AlertDialogTitle>
+                          </AlertDialogHeader>
+                          <div className="py-4">
+                            <OfferTemplateForm
+                              initialValues={template}
+                              isEditing={true}
+                            />
+                          </div>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      <Button size="sm">Use Template</Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
           ) : (
             <div className="text-center py-12">
               <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />

@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ModeToggle } from "../mode-toggle";
 
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,6 +70,9 @@ export default function Header() {
                 <Search className="h-5 w-5" />
               </button>
             </form>
+          </div>
+          <div className="hidden lg:block">
+            <ModeToggle />
           </div>
 
           {/* Right: User Menu and Mobile Menu */}
@@ -132,7 +136,10 @@ export default function Header() {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="text-red-500"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import {
   fetchAssessments,
   deleteAssessment,
-} from "@/store/slices/assessmentsSlice"; // Add deleteAssessment action
+} from "@/store/slices/assessmentsSlice";
 import { fetchCandidates } from "@/store/slices/candidatesSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ export default function AssessmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAssessment, setSelectedAssessment] = useState<number | null>(
     null
-  ); // State to track selected assessment for deletion
+  );
 
   useEffect(() => {
     dispatch(fetchAssessments());
@@ -48,10 +48,15 @@ export default function AssessmentsPage() {
     return candidate ? candidate.name : "Unknown Candidate";
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedAssessment) {
-      dispatch(deleteAssessment(selectedAssessment)); // Dispatch deletion action
-      setSelectedAssessment(null); // Reset selected assessment after deletion
+      try {
+        await dispatch(deleteAssessment(selectedAssessment)).unwrap(); // ensure success
+        dispatch(fetchAssessments()); // ✅ Refetch updated list
+        setSelectedAssessment(null); // Reset selected item
+      } catch (error) {
+        console.error("Failed to delete assessment:", error);
+      }
     }
   };
 
@@ -138,6 +143,7 @@ export default function AssessmentsPage() {
                 <Button variant="outline" size="sm">
                   Edit
                 </Button>
+
                 {/* Delete Button with Modal Confirmation */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -148,7 +154,8 @@ export default function AssessmentsPage() {
                         setSelectedAssessment(Number(assessment.id))
                       }
                     >
-                      <Trash2 className="h-4 w-4 mr-1" /> Delete
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-sm">

@@ -62,16 +62,10 @@
       "candidateId": 1
     },
     {
-      "id": "2",
-      "title": ".NET API Development",
-      "description": "Create a RESTful API with .NET Core",
-      "candidateId": 2
-    },
-    {
-      "id": "94ce",
-      "title": "k cha",
-      "description": "thik cha",
-      "candidateId": "2"
+      "id": "83d4",
+      "title": "Backend Challenge ",
+      "description": "Make model for login system.",
+      "candidateId": "1"
     }
   ],
   "evaluations": [
