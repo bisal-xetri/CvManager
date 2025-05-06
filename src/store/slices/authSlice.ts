@@ -1,63 +1,66 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  GoogleAuthProvider,
-} from "firebase/auth";
+// src/store/slices/authSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
-import type { AuthState, User } from "@/types";
 
-// Initial state
+interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
+
+interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}
+
 const initialState: AuthState = {
   user: null,
   loading: false,
   error: null,
 };
 
-// Async thunks
-export const signInWithGoogle = createAsyncThunk(
-  "auth/signInWithGoogle",
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-
-      if (!credential) {
-        throw new Error("No credential returned from Firebase");
-      }
-
-      const user = result.user;
-      return {
-        uid: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || "",
-        photoURL: user.photoURL || undefined,
-      } as User;
-    } catch (error) {
-      return rejectWithValue((error as Error).message);
-    }
+export const signInWithGoogle = createAsyncThunk<
+  User,
+  void,
+  { rejectValue: string }
+>("auth/signInWithGoogle", async (_, { rejectWithValue }) => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    return {
+      uid: user.uid,
+      email: user.email || "",
+      displayName: user.displayName || "",
+      photoURL: user.photoURL || undefined,
+    };
+  } catch (error) {
+    return rejectWithValue((error as Error).message);
   }
-);
+});
 
-export const signOut = createAsyncThunk(
+export const signOut = createAsyncThunk<void, void, { rejectValue: string }>(
   "auth/signOut",
   async (_, { rejectWithValue }) => {
     try {
       await firebaseSignOut(auth);
-      return null;
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
   }
 );
 
-// Slice
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {
+    setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     },
     clearError: (state) => {
       state.error = null;
@@ -65,7 +68,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Sign in with Google
       .addCase(signInWithGoogle.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -73,29 +75,24 @@ const authSlice = createSlice({
       .addCase(signInWithGoogle.fulfilled, (state, action) => {
         state.user = action.payload;
         state.loading = false;
-        state.error = null;
       })
       .addCase(signInWithGoogle.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || "Google sign-in failed";
       })
-      // Sign out
       .addCase(signOut.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(signOut.fulfilled, (state) => {
         state.user = null;
         state.loading = false;
-        state.error = null;
       })
       .addCase(signOut.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || "Sign out failed";
       });
   },
 });
 
-export const { setUser, clearError } = authSlice.actions;
-
+export const { setUser, setLoading, clearError } = authSlice.actions;
 export default authSlice.reducer;

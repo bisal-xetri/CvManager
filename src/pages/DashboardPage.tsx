@@ -19,7 +19,6 @@ import {
   Clock,
   Calendar,
   BarChart3,
-  Plus,
   ArrowUpRight,
 } from "lucide-react";
 import { CandidateCard } from "@/components";
@@ -99,8 +98,6 @@ export default function DashboardPage() {
 
   const recentCandidates = [...candidates]
     .sort((a, b) => {
-      // This is a simplification; in a real app, you'd have createdAt timestamps
-      // to sort by most recently added
       return parseInt(String(b.id)) - parseInt(String(a.id));
     })
     .slice(0, 4);
@@ -113,12 +110,6 @@ export default function DashboardPage() {
     <div className="space-y-6 ">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Link to="/candidates/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Candidate
-          </Button>
-        </Link>
       </div>
 
       {/* Status Cards */}

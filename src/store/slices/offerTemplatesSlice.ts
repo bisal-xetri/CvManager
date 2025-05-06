@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { OfferTemplate } from '@/types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { OfferTemplate } from "@/types";
 
 // API URL
-const API_URL = 'http://localhost:3001/offerTemplates';
+const API_URL = "https://jsonserver-1-etxz.onrender.com/offerTemplates";
 
 // Initial state
 interface OfferTemplatesState {
@@ -19,12 +19,12 @@ const initialState: OfferTemplatesState = {
 
 // Async thunks
 export const fetchOfferTemplates = createAsyncThunk(
-  'offerTemplates/fetchOfferTemplates',
+  "offerTemplates/fetchOfferTemplates",
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Failed to fetch offer templates');
+        throw new Error("Failed to fetch offer templates");
       }
       const data = await response.json();
       return data as OfferTemplate[];
@@ -35,18 +35,18 @@ export const fetchOfferTemplates = createAsyncThunk(
 );
 
 export const createOfferTemplate = createAsyncThunk(
-  'offerTemplates/createOfferTemplate',
-  async (offerTemplate: Omit<OfferTemplate, 'id'>, { rejectWithValue }) => {
+  "offerTemplates/createOfferTemplate",
+  async (offerTemplate: Omit<OfferTemplate, "id">, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(offerTemplate),
       });
       if (!response.ok) {
-        throw new Error('Failed to create offer template');
+        throw new Error("Failed to create offer template");
       }
       const data = await response.json();
       return data as OfferTemplate;
@@ -57,18 +57,18 @@ export const createOfferTemplate = createAsyncThunk(
 );
 
 export const updateOfferTemplate = createAsyncThunk(
-  'offerTemplates/updateOfferTemplate',
+  "offerTemplates/updateOfferTemplate",
   async (offerTemplate: OfferTemplate, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${offerTemplate.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(offerTemplate),
       });
       if (!response.ok) {
-        throw new Error('Failed to update offer template');
+        throw new Error("Failed to update offer template");
       }
       const data = await response.json();
       return data as OfferTemplate;
@@ -79,14 +79,14 @@ export const updateOfferTemplate = createAsyncThunk(
 );
 
 export const deleteOfferTemplate = createAsyncThunk(
-  'offerTemplates/deleteOfferTemplate',
+  "offerTemplates/deleteOfferTemplate",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error('Failed to delete offer template');
+        throw new Error("Failed to delete offer template");
       }
       return id;
     } catch (error) {
@@ -97,7 +97,7 @@ export const deleteOfferTemplate = createAsyncThunk(
 
 // Slice
 const offerTemplatesSlice = createSlice({
-  name: 'offerTemplates',
+  name: "offerTemplates",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

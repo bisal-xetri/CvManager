@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { Evaluation } from '@/types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Evaluation } from "@/types";
 
 // API URL
-const API_URL = 'http://localhost:3001/evaluations';
+const API_URL = "https://jsonserver-1-etxz.onrender.com/evaluations";
 
 // Initial state
 interface EvaluationsState {
@@ -21,12 +21,12 @@ const initialState: EvaluationsState = {
 
 // Async thunks
 export const fetchEvaluations = createAsyncThunk(
-  'evaluations/fetchEvaluations',
+  "evaluations/fetchEvaluations",
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Failed to fetch evaluations');
+        throw new Error("Failed to fetch evaluations");
       }
       const data = await response.json();
       return data as Evaluation[];
@@ -37,12 +37,12 @@ export const fetchEvaluations = createAsyncThunk(
 );
 
 export const fetchEvaluationsByCandidateId = createAsyncThunk(
-  'evaluations/fetchEvaluationsByCandidateId',
+  "evaluations/fetchEvaluationsByCandidateId",
   async (candidateId: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}?candidateId=${candidateId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch candidate evaluations');
+        throw new Error("Failed to fetch candidate evaluations");
       }
       const data = await response.json();
       return data as Evaluation[];
@@ -53,18 +53,18 @@ export const fetchEvaluationsByCandidateId = createAsyncThunk(
 );
 
 export const createEvaluation = createAsyncThunk(
-  'evaluations/createEvaluation',
-  async (evaluation: Omit<Evaluation, 'id'>, { rejectWithValue }) => {
+  "evaluations/createEvaluation",
+  async (evaluation: Omit<Evaluation, "id">, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(evaluation),
       });
       if (!response.ok) {
-        throw new Error('Failed to create evaluation');
+        throw new Error("Failed to create evaluation");
       }
       const data = await response.json();
       return data as Evaluation;
@@ -75,18 +75,18 @@ export const createEvaluation = createAsyncThunk(
 );
 
 export const updateEvaluation = createAsyncThunk(
-  'evaluations/updateEvaluation',
+  "evaluations/updateEvaluation",
   async (evaluation: Evaluation, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${evaluation.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(evaluation),
       });
       if (!response.ok) {
-        throw new Error('Failed to update evaluation');
+        throw new Error("Failed to update evaluation");
       }
       const data = await response.json();
       return data as Evaluation;
@@ -97,14 +97,14 @@ export const updateEvaluation = createAsyncThunk(
 );
 
 export const deleteEvaluation = createAsyncThunk(
-  'evaluations/deleteEvaluation',
+  "evaluations/deleteEvaluation",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error('Failed to delete evaluation');
+        throw new Error("Failed to delete evaluation");
       }
       return id;
     } catch (error) {
@@ -115,7 +115,7 @@ export const deleteEvaluation = createAsyncThunk(
 
 // Slice
 const evaluationsSlice = createSlice({
-  name: 'evaluations',
+  name: "evaluations",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -153,8 +153,11 @@ const evaluationsSlice = createSlice({
       })
       .addCase(createEvaluation.fulfilled, (state, action) => {
         state.evaluations.push(action.payload);
-        if (state.candidateEvaluations.length > 0 && 
-            state.candidateEvaluations[0].candidateId === action.payload.candidateId) {
+        if (
+          state.candidateEvaluations.length > 0 &&
+          state.candidateEvaluations[0].candidateId ===
+            action.payload.candidateId
+        ) {
           state.candidateEvaluations.push(action.payload);
         }
         state.loading = false;
@@ -175,14 +178,14 @@ const evaluationsSlice = createSlice({
         if (index !== -1) {
           state.evaluations[index] = action.payload;
         }
-        
+
         const candidateIndex = state.candidateEvaluations.findIndex(
           (evaluation) => evaluation.id === action.payload.id
         );
         if (candidateIndex !== -1) {
           state.candidateEvaluations[candidateIndex] = action.payload;
         }
-        
+
         state.loading = false;
       })
       .addCase(updateEvaluation.rejected, (state, action) => {

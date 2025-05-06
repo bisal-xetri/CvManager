@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { fetchCandidates } from "@/store/slices/candidatesSlice";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search, Loader2 } from "lucide-react";
+import { Plus, Search, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Technology, InterviewStatus } from "@/types";
+
+// Number of items per page
+const ITEMS_PER_PAGE = 4;
 
 export default function CandidatesPage() {
   const dispatch = useAppDispatch();
@@ -21,6 +24,7 @@ export default function CandidatesPage() {
     (state) => state.candidates
   );
 
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [technologyFilter, setTechnologyFilter] = useState<Technology | "all">(
     "all"
@@ -28,6 +32,7 @@ export default function CandidatesPage() {
   const [statusFilter, setStatusFilter] = useState<InterviewStatus | "all">(
     "all"
   );
+  const [currentPage, setCurrentPage] = useState(1);
 
   const technologies: Technology[] = [".NET", "ReactJS", "DevOps", "QA"];
   const statuses: InterviewStatus[] = [
@@ -39,9 +44,26 @@ export default function CandidatesPage() {
     "Blacklisted",
   ];
 
+  // Fetch candidates on mount
   useEffect(() => {
     dispatch(fetchCandidates());
+    window.scrollTo(0, 0);
   }, [dispatch]);
+
+  // Update statusFilter based on URL query param
+  useEffect(() => {
+    const statusFromURL = searchParams.get("status");
+    if (statusFromURL) {
+      const matched = statuses.find(
+        (s) => s.toLowerCase() === statusFromURL.toLowerCase()
+      );
+      setStatusFilter((matched as InterviewStatus) || "all");
+    } else {
+      setStatusFilter("all");
+    }
+    // Reset to first page when filters change
+    setCurrentPage(1);
+  }, [searchParams]);
 
   const filteredCandidates = candidates.filter((candidate) => {
     const matchesSearch =
@@ -51,11 +73,27 @@ export default function CandidatesPage() {
 
     const matchesTechnology =
       technologyFilter === "all" || candidate.technology === technologyFilter;
+
     const matchesStatus =
-      statusFilter === "all" || candidate.interviewStatus === statusFilter;
+      statusFilter === "all" ||
+      candidate.interviewStatus.toLowerCase() === statusFilter.toLowerCase();
 
     return matchesSearch && matchesTechnology && matchesStatus;
   });
+
+  // Calculate pagination
+  const totalItems = filteredCandidates.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedCandidates = filteredCandidates.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-6">
@@ -76,16 +114,20 @@ export default function CandidatesPage() {
           <Input
             placeholder="Search by name, email, or phone"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset to first page when search changes
+            }}
             className="pl-10"
           />
         </div>
 
         <Select
           value={technologyFilter}
-          onValueChange={(value) =>
-            setTechnologyFilter(value as Technology | "all")
-          }
+          onValueChange={(value) => {
+            setTechnologyFilter(value as Technology | "all");
+            setCurrentPage(1); // Reset to first page when filter changes
+          }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by technology" />
@@ -102,9 +144,10 @@ export default function CandidatesPage() {
 
         <Select
           value={statusFilter}
-          onValueChange={(value) =>
-            setStatusFilter(value as InterviewStatus | "all")
-          }
+          onValueChange={(value) => {
+            setStatusFilter(value as InterviewStatus | "all");
+            setCurrentPage(1); // Reset to first page when filter changes
+          }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by status" />
@@ -136,12 +179,50 @@ export default function CandidatesPage() {
             Try Again
           </Button>
         </div>
-      ) : filteredCandidates.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xxl:grid-cols-3 gap-4">
-          {filteredCandidates.map((candidate) => (
-            <CandidateCard key={candidate.id} candidate={candidate} />
-          ))}
-        </div>
+      ) : paginatedCandidates.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xxl:grid-cols-3 gap-4">
+            {paginatedCandidates.map((candidate) => (
+              <CandidateCard key={candidate.id} candidate={candidate} />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                )
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
       ) : candidates.length > 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">No candidates match your filters</p>
@@ -151,6 +232,7 @@ export default function CandidatesPage() {
               setSearchTerm("");
               setTechnologyFilter("all");
               setStatusFilter("all");
+              setCurrentPage(1);
             }}
             className="mt-4"
           >

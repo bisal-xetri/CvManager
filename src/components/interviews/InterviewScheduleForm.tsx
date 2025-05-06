@@ -156,6 +156,7 @@ export default function InterviewScheduleForm({
                     <div key={index} className="flex items-center space-x-2">
                       <Field
                         as={Input}
+                        value={interviewer}
                         name={`interviewers.${index}`}
                         placeholder="Enter interviewer name"
                         className="flex-1"

@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
-
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AuthRedirect } from "@/components/auth/AuthRedirect";
+import { AuthLoader } from "@/components/auth/AuthLoader";
 // Pages
 import HomePage from "@/pages/HomePage";
-import LoginPage from "@/pages/LoginPage";
+
 import DashboardPage from "@/pages/DashboardPage";
 import CandidatesPage from "@/pages/CandidatesPage";
 import CandidateNewPage from "@/pages/CandidateNewPage";
@@ -17,14 +19,32 @@ import NotFound from "@/pages/NotFound";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: (
+      <AuthLoader>
+        <AuthRedirect>
+          <HomePage />
+        </AuthRedirect>
+      </AuthLoader>
+    ),
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: (
+      <AuthLoader>
+        <AuthRedirect>
+          <HomePage />
+        </AuthRedirect>
+      </AuthLoader>
+    ),
   },
   {
-    element: <AuthenticatedLayout />,
+    element: (
+      <AuthLoader>
+        <ProtectedRoute>
+          <AuthenticatedLayout />
+        </ProtectedRoute>
+      </AuthLoader>
+    ),
     children: [
       {
         path: "/dashboard",

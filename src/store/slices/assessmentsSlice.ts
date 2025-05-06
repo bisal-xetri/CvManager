@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { Assessment } from "@/types";
 
 // API URL
-const API_URL = "http://localhost:3001/assessments";
+const API_URL = "https://jsonserver-1-etxz.onrender.com/assessments";
 
 // Initial state
 interface AssessmentsState {

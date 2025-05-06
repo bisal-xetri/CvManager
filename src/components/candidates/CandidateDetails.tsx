@@ -105,8 +105,30 @@ export default function CandidateDetails() {
     }
   }, [candidate]);
 
+  const getStatusIndex = (status: InterviewStatus): number => {
+    return interviewStatuses.indexOf(status);
+  };
+
   const handleStatusChange = async (status: string) => {
     if (!candidate) return;
+    const currentIndex = getStatusIndex(candidate.interviewStatus);
+    const newIndex = getStatusIndex(status as InterviewStatus);
+
+    if (newIndex < currentIndex) {
+      toast.warning("You can't move back to a previous step.");
+      return;
+    }
+
+    if (
+      (candidate.interviewStatus === "Hired" &&
+        (status === "Rejected" || status === "Blacklisted")) ||
+      (candidate.interviewStatus === "Rejected" && status === "Hired")
+    ) {
+      toast.warning(
+        "Invalid transition: Cannot hire a rejected candidate or reject/blacklist a hired one."
+      );
+      return;
+    }
 
     setIsStatusUpdating(true);
     try {
@@ -116,8 +138,10 @@ export default function CandidateDetails() {
           interviewStatus: status as InterviewStatus,
         })
       );
+      setInterviewStatus(status as InterviewStatus);
       toast.success("Status updated successfully");
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Failed to update status:", error);
       toast.error("Failed to update status");
     } finally {
       setIsStatusUpdating(false);
@@ -132,7 +156,8 @@ export default function CandidateDetails() {
       await dispatch(deleteCandidate(candidate.id));
       toast.success("Candidate deleted successfully");
       navigate("/candidates");
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Failed to delete candidate:", error);
       toast.error("Failed to delete candidate");
     } finally {
       setIsDeleting(false);
@@ -272,9 +297,14 @@ export default function CandidateDetails() {
               <Select
                 value={interviewStatus}
                 onValueChange={handleStatusChange}
+                disabled={isStatusUpdating}
               >
                 <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Update status" />
+                  <SelectValue
+                    placeholder={
+                      isStatusUpdating ? "Updating..." : "Update status"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {interviewStatuses.map((status) => (
@@ -566,7 +596,11 @@ export default function CandidateDetails() {
                             Reschedule
                           </Button>
                         )}
-                        <Button variant="secondary" size="sm">
+                        <Button
+                          variant="secondary"
+                          className="bg-red-500/40 hover:bg-red-600/60"
+                          size="sm"
+                        >
                           {isPast ? "View Details" : "Send Reminder"}
                         </Button>
                       </CardFooter>

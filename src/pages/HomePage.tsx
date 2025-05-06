@@ -1,14 +1,10 @@
 import { Link } from "react-router-dom";
-import {
-  Users,
-  ClipboardCheck,
-  Calendar,
-  FileText,
-  ChevronRight,
-} from "lucide-react";
+import { Users, ClipboardCheck, Calendar, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/layout/Footer";
+
+import LoginForm from "@/components/auth/LoginForm";
 
 export default function HomePage() {
   const features = [
@@ -46,14 +42,11 @@ export default function HomePage() {
               </span>
               <span className="ml-1 text-sm text-gray-600">HR Hub</span>
             </Link>
-            <Link to="/login">
-              <Button className="w-full bg-purple-500 hover:bg-purple-700">
-                Login
-              </Button>
-            </Link>
+            <LoginForm className=" bg-purple-500 text-white hover:bg-purple-700" />
           </div>
         </div>
       </nav>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white to-gray-50">
         <div className="hrm-container py-20">
@@ -66,15 +59,10 @@ export default function HomePage() {
               management solution designed for modern hiring teams.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              {/* {isAuthenticated ? (
-                <Link to="/dashboard">
-                  <Button size="lg">Go to Dashboard</Button>
-                </Link>
-              ) : ( */}
-              <Link to="/login">
-                <Button size="lg">Get Started</Button>
-              </Link>
-              {/* )} */}
+              <LoginForm
+                text="Get Started"
+                className="w-full flex items-center justify-center gap-2"
+              />
               <Link to="/about">
                 <Button variant="outline" size="lg">
                   Learn More
@@ -181,15 +169,10 @@ export default function HomePage() {
             Join thousands of companies that use our platform to streamline
             their recruitment.
           </p>
-          <Link to="/login">
-            <Button
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100"
-            >
-              Get Started Now
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+          <LoginForm
+            text="Get Started Now"
+            className="bg-white ml-[45%] text-gray-900 hover:bg-gray-100"
+          />
         </div>
       </section>
 

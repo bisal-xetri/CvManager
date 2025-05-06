@@ -46,22 +46,45 @@ const interviewStatuses: InterviewStatus[] = [
 ];
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  phone: Yup.string().required("Phone number is required"),
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Phone must be 10 digits"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
   technology: Yup.string().required("Technology is required"),
   level: Yup.string().required("Level is required"),
-  experience: Yup.string().required("Experience is required"),
-  expectedSalary: Yup.string().required("Expected salary is required"),
+  experience: Yup.number()
+    .typeError("Experience must be a number")
+    .required("Experience is required")
+    .min(0, "Experience must be at least 0 years")
+    .max(40, "Experience must be less than 40 years"),
+  expectedSalary: Yup.number()
+    .typeError("Expected salary must be a number")
+    .required("Expected salary is required")
+    .min(20000, "Salary must be at least रु 20,000")
+    .max(200000, "Salary must be under रु 2,00,000"),
   interviewStatus: Yup.string().required("Interview status is required"),
   cv: Yup.mixed().required("CV is required"),
-  references: Yup.string(),
-  notes: Yup.string(),
+  references: Yup.string().max(100, "Max 100 characters"),
+  notes: Yup.string().max(500, "Max 500 characters"),
 });
 
 export default function CandidateForm({
+  /*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Form to add or edit a candidate.
+   *
+   * @param {Object} props - Props to pass to the component.
+   * @param {Object} [props.initialValues] - Initial values for the form.
+   * @param {boolean} [props.isEditing=false] - Whether the form is for editing or adding.
+   *
+   * @returns A JSX element representing the form.
+   */
+  /*******  6a1f9d9a-6b67-4194-99e2-ccdd2bb4a4ad  *******/
   initialValues,
   isEditing = false,
 }: CandidateFormProps) {

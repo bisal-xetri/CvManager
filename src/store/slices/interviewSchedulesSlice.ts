@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { InterviewSchedule } from '@/types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { InterviewSchedule } from "@/types";
 
 // API URL
-const API_URL = 'http://localhost:3001/interviewSchedules';
+const API_URL = "https://jsonserver-1-etxz.onrender.com/interviewSchedules";
 
 // Initial state
 interface InterviewSchedulesState {
@@ -21,12 +21,12 @@ const initialState: InterviewSchedulesState = {
 
 // Async thunks
 export const fetchInterviewSchedules = createAsyncThunk(
-  'interviewSchedules/fetchInterviewSchedules',
+  "interviewSchedules/fetchInterviewSchedules",
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Failed to fetch interview schedules');
+        throw new Error("Failed to fetch interview schedules");
       }
       const data = await response.json();
       return data as InterviewSchedule[];
@@ -37,12 +37,12 @@ export const fetchInterviewSchedules = createAsyncThunk(
 );
 
 export const fetchInterviewSchedulesByCandidateId = createAsyncThunk(
-  'interviewSchedules/fetchInterviewSchedulesByCandidateId',
+  "interviewSchedules/fetchInterviewSchedulesByCandidateId",
   async (candidateId: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}?candidateId=${candidateId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch candidate interview schedules');
+        throw new Error("Failed to fetch candidate interview schedules");
       }
       const data = await response.json();
       return data as InterviewSchedule[];
@@ -53,18 +53,21 @@ export const fetchInterviewSchedulesByCandidateId = createAsyncThunk(
 );
 
 export const createInterviewSchedule = createAsyncThunk(
-  'interviewSchedules/createInterviewSchedule',
-  async (interviewSchedule: Omit<InterviewSchedule, 'id'>, { rejectWithValue }) => {
+  "interviewSchedules/createInterviewSchedule",
+  async (
+    interviewSchedule: Omit<InterviewSchedule, "id">,
+    { rejectWithValue }
+  ) => {
     try {
       const response = await fetch(API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(interviewSchedule),
       });
       if (!response.ok) {
-        throw new Error('Failed to create interview schedule');
+        throw new Error("Failed to create interview schedule");
       }
       const data = await response.json();
       return data as InterviewSchedule;
@@ -75,18 +78,18 @@ export const createInterviewSchedule = createAsyncThunk(
 );
 
 export const updateInterviewSchedule = createAsyncThunk(
-  'interviewSchedules/updateInterviewSchedule',
+  "interviewSchedules/updateInterviewSchedule",
   async (interviewSchedule: InterviewSchedule, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${interviewSchedule.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(interviewSchedule),
       });
       if (!response.ok) {
-        throw new Error('Failed to update interview schedule');
+        throw new Error("Failed to update interview schedule");
       }
       const data = await response.json();
       return data as InterviewSchedule;
@@ -97,14 +100,14 @@ export const updateInterviewSchedule = createAsyncThunk(
 );
 
 export const deleteInterviewSchedule = createAsyncThunk(
-  'interviewSchedules/deleteInterviewSchedule',
+  "interviewSchedules/deleteInterviewSchedule",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error('Failed to delete interview schedule');
+        throw new Error("Failed to delete interview schedule");
       }
       return id;
     } catch (error) {
@@ -115,7 +118,7 @@ export const deleteInterviewSchedule = createAsyncThunk(
 
 // Slice
 const interviewSchedulesSlice = createSlice({
-  name: 'interviewSchedules',
+  name: "interviewSchedules",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -138,14 +141,20 @@ const interviewSchedulesSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchInterviewSchedulesByCandidateId.fulfilled, (state, action) => {
-        state.candidateInterviewSchedules = action.payload;
-        state.loading = false;
-      })
-      .addCase(fetchInterviewSchedulesByCandidateId.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
+      .addCase(
+        fetchInterviewSchedulesByCandidateId.fulfilled,
+        (state, action) => {
+          state.candidateInterviewSchedules = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(
+        fetchInterviewSchedulesByCandidateId.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        }
+      )
       // Create interview schedule
       .addCase(createInterviewSchedule.pending, (state) => {
         state.loading = true;
@@ -153,8 +162,11 @@ const interviewSchedulesSlice = createSlice({
       })
       .addCase(createInterviewSchedule.fulfilled, (state, action) => {
         state.interviewSchedules.push(action.payload);
-        if (state.candidateInterviewSchedules.length > 0 && 
-            state.candidateInterviewSchedules[0].candidateId === action.payload.candidateId) {
+        if (
+          state.candidateInterviewSchedules.length > 0 &&
+          state.candidateInterviewSchedules[0].candidateId ===
+            action.payload.candidateId
+        ) {
           state.candidateInterviewSchedules.push(action.payload);
         }
         state.loading = false;
@@ -175,14 +187,14 @@ const interviewSchedulesSlice = createSlice({
         if (index !== -1) {
           state.interviewSchedules[index] = action.payload;
         }
-        
+
         const candidateIndex = state.candidateInterviewSchedules.findIndex(
           (interviewSchedule) => interviewSchedule.id === action.payload.id
         );
         if (candidateIndex !== -1) {
           state.candidateInterviewSchedules[candidateIndex] = action.payload;
         }
-        
+
         state.loading = false;
       })
       .addCase(updateInterviewSchedule.rejected, (state, action) => {
@@ -198,9 +210,10 @@ const interviewSchedulesSlice = createSlice({
         state.interviewSchedules = state.interviewSchedules.filter(
           (interviewSchedule) => interviewSchedule.id !== action.payload
         );
-        state.candidateInterviewSchedules = state.candidateInterviewSchedules.filter(
-          (interviewSchedule) => interviewSchedule.id !== action.payload
-        );
+        state.candidateInterviewSchedules =
+          state.candidateInterviewSchedules.filter(
+            (interviewSchedule) => interviewSchedule.id !== action.payload
+          );
         state.loading = false;
       })
       .addCase(deleteInterviewSchedule.rejected, (state, action) => {

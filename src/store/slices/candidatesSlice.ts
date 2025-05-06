@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { Candidate } from '@/types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Candidate } from "@/types";
 
 // API URL
-const API_URL = 'http://localhost:3001/candidates';
+const API_URL = "https://jsonserver-1-etxz.onrender.com/candidates";
 
 // Initial state
 interface CandidatesState {
@@ -21,12 +21,12 @@ const initialState: CandidatesState = {
 
 // Async thunks
 export const fetchCandidates = createAsyncThunk(
-  'candidates/fetchCandidates',
+  "candidates/fetchCandidates",
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Failed to fetch candidates');
+        throw new Error("Failed to fetch candidates");
       }
       const data = await response.json();
       return data as Candidate[];
@@ -37,12 +37,12 @@ export const fetchCandidates = createAsyncThunk(
 );
 
 export const fetchCandidateById = createAsyncThunk(
-  'candidates/fetchCandidateById',
+  "candidates/fetchCandidateById",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch candidate');
+        throw new Error("Failed to fetch candidate");
       }
       const data = await response.json();
       return data as Candidate;
@@ -53,18 +53,18 @@ export const fetchCandidateById = createAsyncThunk(
 );
 
 export const createCandidate = createAsyncThunk(
-  'candidates/createCandidate',
-  async (candidate: Omit<Candidate, 'id'>, { rejectWithValue }) => {
+  "candidates/createCandidate",
+  async (candidate: Omit<Candidate, "id">, { rejectWithValue }) => {
     try {
       const response = await fetch(API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(candidate),
       });
       if (!response.ok) {
-        throw new Error('Failed to create candidate');
+        throw new Error("Failed to create candidate");
       }
       const data = await response.json();
       return data as Candidate;
@@ -75,18 +75,18 @@ export const createCandidate = createAsyncThunk(
 );
 
 export const updateCandidate = createAsyncThunk(
-  'candidates/updateCandidate',
+  "candidates/updateCandidate",
   async (candidate: Candidate, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${candidate.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(candidate),
       });
       if (!response.ok) {
-        throw new Error('Failed to update candidate');
+        throw new Error("Failed to update candidate");
       }
       const data = await response.json();
       return data as Candidate;
@@ -97,14 +97,14 @@ export const updateCandidate = createAsyncThunk(
 );
 
 export const deleteCandidate = createAsyncThunk(
-  'candidates/deleteCandidate',
+  "candidates/deleteCandidate",
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error('Failed to delete candidate');
+        throw new Error("Failed to delete candidate");
       }
       return id;
     } catch (error) {
@@ -115,7 +115,7 @@ export const deleteCandidate = createAsyncThunk(
 
 // Slice
 const candidatesSlice = createSlice({
-  name: 'candidates',
+  name: "candidates",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

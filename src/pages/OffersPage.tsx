@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { fetchOfferTemplates } from "@/store/slices/offerTemplatesSlice";
+import {
+  fetchOfferTemplates,
+  createOfferTemplate,
+  updateOfferTemplate,
+  deleteOfferTemplate,
+} from "@/store/slices/offerTemplatesSlice";
 import { fetchCandidates } from "@/store/slices/candidatesSlice";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,11 +27,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, FileText, Loader2, Mail } from "lucide-react";
+import { Plus, FileText, Loader2, Mail, Trash2, Edit } from "lucide-react";
 import { OfferTemplateForm, OfferGenerator } from "@/components";
-import type { Candidate } from "@/types";
-
+import type { Candidate, OfferTemplate } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+export interface OfferGeneratorProps {
+  candidate: Candidate;
+  templates?: OfferTemplate[];
+}
 
 export default function OffersPage() {
   const dispatch = useAppDispatch();
@@ -37,6 +46,10 @@ export default function OffersPage() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null
   );
+  const [editingTemplate, setEditingTemplate] = useState<OfferTemplate | null>(
+    null
+  );
+  const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchOfferTemplates());
@@ -45,6 +58,39 @@ export default function OffersPage() {
 
   const handleGenerateOffer = (candidate: Candidate) => {
     setSelectedCandidate(candidate);
+  };
+
+  const handleCreateTemplate = async (values: Omit<OfferTemplate, "id">) => {
+    try {
+      await dispatch(createOfferTemplate(values)).unwrap();
+      dispatch(fetchOfferTemplates());
+    } catch (error) {
+      console.error("Failed to create template:", error);
+    }
+  };
+
+  const handleUpdateTemplate = async (
+    values: OfferTemplate | Omit<OfferTemplate, "id">
+  ): Promise<void> => {
+    try {
+      const template = "id" in values ? values : { ...values, id: "" };
+      await dispatch(updateOfferTemplate(template)).unwrap();
+      dispatch(fetchOfferTemplates());
+    } catch (error) {
+      console.error("Failed to update template:", error);
+    }
+  };
+
+  const handleDeleteTemplate = async () => {
+    if (templateToDelete) {
+      try {
+        await dispatch(deleteOfferTemplate(templateToDelete)).unwrap();
+        dispatch(fetchOfferTemplates());
+        setTemplateToDelete(null);
+      } catch (error) {
+        console.error("Failed to delete template:", error);
+      }
+    }
   };
 
   const eligibleCandidates = candidates.filter(
@@ -73,7 +119,10 @@ export default function OffersPage() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="py-4">
-                <OfferTemplateForm />
+                <OfferTemplateForm
+                  onSubmit={handleCreateTemplate}
+                  onSuccess={() => dispatch(fetchOfferTemplates())}
+                />
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -131,6 +180,27 @@ export default function OffersPage() {
         </div>
       </div>
 
+      <AlertDialog
+        open={!!templateToDelete}
+        onOpenChange={(open) => !open && setTemplateToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this template? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleDeleteTemplate}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Tabs defaultValue="templates" className="w-full">
         <TabsList className="grid w-full gap-1 grid-cols-2">
           <TabsTrigger value="templates">Offer Templates</TabsTrigger>
@@ -157,31 +227,25 @@ export default function OffersPage() {
                         </pre>
                       </ScrollArea>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-2xl">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Edit Offer Template
-                            </AlertDialogTitle>
-                          </AlertDialogHeader>
-                          <div className="py-4">
-                            <OfferTemplateForm
-                              initialValues={template}
-                              isEditing={true}
-                            />
-                          </div>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <Button size="sm">Use Template</Button>
+                    <CardFooter className="flex justify-between gap-2">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingTemplate(template)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => setTemplateToDelete(String(template.id))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </CardFooter>
                   </Card>
                 ))}
@@ -203,7 +267,10 @@ export default function OffersPage() {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <div className="py-4">
-                    <OfferTemplateForm />
+                    <OfferTemplateForm
+                      onSubmit={handleCreateTemplate}
+                      onSuccess={() => dispatch(fetchOfferTemplates())}
+                    />
                   </div>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -235,27 +302,52 @@ export default function OffersPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Generate Offer Dialog */}
       {selectedCandidate && (
         <AlertDialog
           open={!!selectedCandidate}
           onOpenChange={() => setSelectedCandidate(null)}
         >
-          <AlertDialogContent className="max-w-3xl">
+          <AlertDialogContent className="max-w-4xl h-[80vh] flex flex-col">
             <AlertDialogHeader>
               <AlertDialogTitle>
                 Generate Offer for {selectedCandidate.name}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Create and send an offer letter
+                Select a template and customize the offer letter
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="py-4">
+            <div className="flex-1 overflow-hidden">
               <OfferGenerator candidate={selectedCandidate} />
             </div>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button>Send Offer</Button>
             </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {editingTemplate && (
+        <AlertDialog
+          open={!!editingTemplate}
+          onOpenChange={(open) => !open && setEditingTemplate(null)}
+        >
+          <AlertDialogContent className="max-w-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Edit Offer Template</AlertDialogTitle>
+            </AlertDialogHeader>
+            <div className="py-4">
+              <OfferTemplateForm
+                initialValues={editingTemplate}
+                isEditing={true}
+                onSubmit={handleUpdateTemplate}
+                onSuccess={() => {
+                  setEditingTemplate(null);
+                  dispatch(fetchOfferTemplates());
+                }}
+                onCancel={() => setEditingTemplate(null)}
+              />
+            </div>
           </AlertDialogContent>
         </AlertDialog>
       )}

@@ -1,32 +1,6 @@
 {
   "candidates": [
     {
-      "id": "1",
-      "name": "Bishal Dhakal",
-      "phone": "9865369089",
-      "email": "bishal@example.com",
-      "technology": "ReactJS",
-      "level": "Junior",
-      "experience": "1",
-      "expectedSalary": "Rs 30,000",
-      "interviewStatus": "Shortlisted",
-      "references": "Anil Sharma",
-      "notes": "Strong frontend skills, eager to learn"
-    },
-    {
-      "id": "2",
-      "name": "Aarati Shrestha",
-      "phone": "9846123456",
-      "email": "aarati@example.com",
-      "technology": ".NET",
-      "level": "Mid",
-      "experience": "3",
-      "expectedSalary": "Rs 65,000",
-      "interviewStatus": "First Interview Complete",
-      "references": "Roshan Poudel",
-      "notes": "Experienced with .NET Core and SQL Server"
-    },
-    {
       "id": "3",
       "name": "Suraj Tamang",
       "phone": "9801234567",
@@ -48,24 +22,66 @@
       "level": "Junior",
       "experience": "1",
       "expectedSalary": "Rs 120,000",
-      "interviewStatus": "First Interview Complete",
+      "interviewStatus": "Hired",
       "references": "Bishal Dhakal",
       "notes": "Pro react develover",
       "cv": "AN intern Report sijan_1.docx"
+    },
+    {
+      "id": "1d2b",
+      "name": "Bishal dhakal",
+      "phone": "9865369089",
+      "email": "rahul@gmail.com",
+      "technology": "ReactJS",
+      "level": "Junior",
+      "experience": "1",
+      "expectedSalary": "Rs 30,000",
+      "interviewStatus": "Shortlisted",
+      "cv": "CV Manager SRS.docx",
+      "references": "Roshan Poudel",
+      "notes": "new candidatee"
+    },
+    {
+      "id": "6477",
+      "name": "Bishal Dhakal",
+      "phone": "9801234567",
+      "email": "ram@gmail.com",
+      "technology": "DevOps",
+      "level": "Junior",
+      "experience": "1",
+      "expectedSalary": "30000",
+      "interviewStatus": "Shortlisted",
+      "cv": "TU Evaluation for Internship (1).pdf",
+      "references": "Anil Sharma",
+      "notes": "new "
+    },
+    {
+      "id": "18a0",
+      "name": "Sijan Pandey",
+      "phone": "9846123456",
+      "email": "sijan@gmail.com",
+      "technology": "QA",
+      "level": "Junior",
+      "experience": "1",
+      "expectedSalary": "30000",
+      "interviewStatus": "Shortlisted",
+      "cv": "Bishal_Dhakal_CV_Revised.docx",
+      "references": "Bishal Dhakal",
+      "notes": "okey"
     }
   ],
   "assessments": [
     {
-      "id": "1",
-      "title": "Frontend React Challenge",
-      "description": "Build a simple React application with state management",
-      "candidateId": 1
+      "id": "ca3a",
+      "title": "Frontend Task",
+      "description": "Create beautiful responsive ui",
+      "candidateId": "3"
     },
     {
-      "id": "83d4",
-      "title": "Backend Challenge ",
-      "description": "Make model for login system.",
-      "candidateId": "1"
+      "id": "bc5b",
+      "title": "Backend Task",
+      "description": "Create complete mode for eccomerce site",
+      "candidateId": "18a0"
     }
   ],
   "evaluations": [
@@ -135,7 +151,7 @@
     },
     {
       "id": "2cfd",
-      "candidateId": "1",
+      "candidateId": null,
       "date": "2025-04-24T10:29:10.433Z",
       "interviewers": [
         "Bishal Dhakal"
@@ -162,7 +178,7 @@
     },
     {
       "id": "5481",
-      "candidateId": "2",
+      "candidateId": null,
       "date": "2025-04-28T18:15:00.000Z",
       "interviewers": [
         "Rahul singh"

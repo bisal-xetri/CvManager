@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/store";
+import { fetchCandidates } from "@/store/slices/candidatesSlice";
 import { signOut } from "@/store/slices/authSlice";
 import { Search, Menu, X, User, LogOut, Settings } from "lucide-react";
 
@@ -14,28 +15,55 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ModeToggle } from "../mode-toggle";
 
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const { user } = useAppSelector((state) => state.auth);
+  const { candidates } = useAppSelector((state) => state.candidates);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    dispatch(fetchCandidates());
+  }, [dispatch]);
+
   const handleSignOut = () => {
     dispatch(signOut());
+    navigate("/");
   };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const searchGlobally = (query: string) => {
+    if (!query.trim()) return [];
+    const searchTerm = query.trim().toLowerCase();
+    return candidates.filter(
+      (candidate) =>
+        candidate.name.toLowerCase().includes(searchTerm) ||
+        candidate.email.toLowerCase().includes(searchTerm) ||
+        candidate.technology.toLowerCase().includes(searchTerm) ||
+        candidate.level.toLowerCase().includes(searchTerm)
+    );
+  };
+
+  const matchingCandidates = searchGlobally(searchTerm);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
-      setSearchTerm(""); // Clear the search bar after submission
+    if (!searchTerm.trim()) return;
+
+    if (matchingCandidates.length > 0) {
+      navigate(`/candidates/${matchingCandidates[0].id}`);
+      setSearchTerm("");
+      setShowDropdown(false);
+    } else {
+      alert("No candidate found.");
     }
   };
 
@@ -54,13 +82,17 @@ export default function Header() {
           </div>
 
           {/* Center: Search */}
-          <div className="hidden md:flex flex-grow justify-center">
-            <form className="relative w-full max-w-md" onSubmit={handleSearch}>
+          <div className="hidden md:flex flex-grow justify-center relative">
+            <form className="relative w-full max-w-md" onSubmit={handleSubmit}>
               <Input
                 type="search"
                 placeholder="Search candidates..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
                 className="pl-10"
               />
               <button
@@ -70,39 +102,60 @@ export default function Header() {
                 <Search className="h-5 w-5" />
               </button>
             </form>
-          </div>
-          <div className="hidden lg:block">
-            <ModeToggle />
+
+            {/* Search results dropdown */}
+            {showDropdown && searchTerm && matchingCandidates.length > 0 && (
+              <div className="absolute mt-10 w-full max-w-md bg-white border rounded shadow z-50">
+                {matchingCandidates.map((candidate) => (
+                  <Link
+                    key={candidate.id}
+                    to={`/candidates/${candidate.id}`}
+                    className="block p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setShowDropdown(false);
+                    }}
+                  >
+                    <div className="font-medium">{candidate.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {candidate.technology} • {candidate.level}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* No Results */}
+            {showDropdown && searchTerm && matchingCandidates.length === 0 && (
+              <div className="absolute mt-10 w-full max-w-md bg-white border rounded shadow z-50 p-2 text-center text-gray-500">
+                No candidates found.
+              </div>
+            )}
           </div>
 
-          {/* Right: User Menu and Mobile Menu */}
+          {/* Right: User Menu */}
           <div className="flex items-center space-x-4">
-            {/* Mobile Search (for small screens) */}
-            <Input
-              type="search"
-              placeholder="Search candidates..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 md:hidden"
-            />
-            <div className="flex md:hidden">
-              <Search
-                className="h-5 w-5 cursor-pointer"
-                onClick={() => navigate(`/search`)} // Navigate to search page for mobile
+            {/* Mobile Search */}
+            <form className="w-full md:hidden" onSubmit={handleSubmit}>
+              <Input
+                type="search"
+                placeholder="Search candidates..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowDropdown(true);
+                }}
+                className="pl-10"
               />
-            </div>
+            </form>
 
-            {/* User menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <span className="relative bg-gray-600 h-8 w-8 rounded-full cursor-pointer">
                   <Avatar className="h-8 w-8">
                     {user?.photoURL ? (
                       <AvatarImage
-                        src={
-                          user.photoURL ||
-                          "https://static.vecteezy.com/system/resources/previews/026/619/142/original/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg"
-                        }
+                        src={user.photoURL || "https://i.pravatar.cc/300"}
                         alt={user.displayName || ""}
                       />
                     ) : (
@@ -146,7 +199,7 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Mobile menu button */}
+            {/* Mobile menu toggle */}
             <span className="md:hidden" onClick={toggleMobileMenu}>
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -158,7 +211,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="md:hidden py-3 px-4 border-t border-gray-200 bg-gray-50">
           <nav className="flex flex-col space-y-2">

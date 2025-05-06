@@ -7,7 +7,7 @@ export interface Candidate {
   technology: Technology;
   level: Level;
   experience: string;
-  expectedSalary: string;
+  expectedSalary?: string;
   interviewStatus: InterviewStatus;
   references: string;
   notes?: string;
@@ -44,12 +44,16 @@ export interface Evaluation {
 }
 
 // Offer Template Types
-export interface OfferTemplate {
-  id: number | string;
+export type OfferTemplate = {
+  id: string | number;
   title: string;
   content: string;
-}
-
+  variables: {
+    name: string;
+    position: string;
+    salary: string;
+  };
+};
 // Interview Schedule Types
 export interface InterviewSchedule {
   id: number | string;
