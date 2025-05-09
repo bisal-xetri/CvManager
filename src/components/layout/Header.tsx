@@ -15,6 +15,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,9 +42,11 @@ export default function Header() {
     dispatch(fetchCandidates());
   }, [dispatch]);
 
+  useEffect(() => {}, [user]);
+
   const handleSignOut = () => {
     dispatch(signOut());
-    navigate("/");
+    navigate("/login");
   };
 
   const toggleMobileMenu = () => {
@@ -189,13 +202,40 @@ export default function Header() {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="text-red-500"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem
+                      className="text-red-500"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you sure you want to log out?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        You will be returned to the homepage and need to log in
+                        again.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="text-red-500 bg-white hover:bg-red-50"
+                        onClick={() => {
+                          handleSignOut();
+                        }}
+                      >
+                        Log out
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </DropdownMenuContent>
             </DropdownMenu>
 

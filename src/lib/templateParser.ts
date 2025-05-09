@@ -1,4 +1,3 @@
-// src/utils/templateParser.ts
 export const parseTemplate = (
   template: string,
   variables: Record<string, string>
